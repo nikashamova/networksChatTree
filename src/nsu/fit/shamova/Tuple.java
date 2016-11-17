@@ -3,13 +3,13 @@ package nsu.fit.shamova;
 import nsu.fit.shamova.messages.IMessage;
 
 public class Tuple {
-    public final IMessage x;
-    public int y;
-    public long z;
+    public final IMessage message;
+    public int countOfTry;
+    public long firstSendTime;
 
-    public Tuple(IMessage x, int y, long z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Tuple(IMessage message, int countOfTry, long firstSendTime) {
+        this.message = message;
+        this.countOfTry = countOfTry;
+        this.firstSendTime = firstSendTime;
     }
 }

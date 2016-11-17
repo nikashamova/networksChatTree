@@ -1,10 +1,7 @@
 package nsu.fit.shamova;
 
-import nsu.fit.shamova.messages.IMessage;
-import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.Type;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,7 +12,7 @@ import java.util.List;
 public class Sender implements Runnable {
     private List<Tuple> messageToSend = new ArrayList();
    // private List<IMessage> waitingMessages = new ArrayList();
-    private List<Tuple> newWaitingMessages = new ArrayList();
+    private List<Tuple> waitingMessages = new ArrayList();
     private Node node;
     private DatagramSocket socket = node.getSocket();
 
@@ -24,28 +21,26 @@ public class Sender implements Runnable {
     }
 
     void send() throws IOException {
-        Iterator iter = messageToSend.iterator();
-        while (iter.hasNext()) {
-            Tuple tmp = (Tuple) iter.next();
-            byte[] msg = tmp.x.getByteMessage();
-            tmp.y++;
+        for (Tuple tmp : messageToSend) {
+            byte[] msg = tmp.message.getByteMessage();
+            tmp.countOfTry++;
             DatagramPacket packet = new DatagramPacket(msg, msg.length);
             socket.send(packet);
-           // waitingMessages.add(tmp.x);
-            newWaitingMessages.add(tmp);
-            if (tmp.x.getType() == Type.MSG && tmp.y < 5)
-                newWaitingMessages.add(tmp);
+            // waitingMessages.add(tmp.message);
+            waitingMessages.add(tmp);
+            if (tmp.message.getType() == Type.MSG && tmp.countOfTry < 5)
+                waitingMessages.add(tmp);
             messageToSend.remove(tmp);
-            iter = (Iterator) iter.next();
         }
+
     }
 
     public List<Tuple> getMessageToSend() {
         return messageToSend;
     }
 
-    public List<Tuple> getNewWaitingMessages() {
-        return newWaitingMessages;
+    public List<Tuple> getWaitingMessages() {
+        return waitingMessages;
     }
 
     /*public void setWaitingMessages(List<IMessage> waitingMessages) {

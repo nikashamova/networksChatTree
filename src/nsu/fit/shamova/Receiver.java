@@ -8,44 +8,46 @@ import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Receiver implements Runnable {
     //private Node node;
     private Sender sender;
+    public static int BUFSIZE = 1024;
+    public static int MAXWAITINGTIME = 10000;
     //private List<IMessage> waitingMessage = sender.getWaitingMessages();
     private DatagramSocket socket; // = node.getSocket();
-    private List<Tuple> newWaitingMessages;
+    private List<Tuple> waitingMessages;
 
-    public Receiver(DatagramSocket socket, Sender sender, List<Tuple> newWaitingMessages) {
+    public Receiver(DatagramSocket socket, Sender sender, List<Tuple> waitingMessages) {
         this.socket = socket;
         this.sender = sender;
-        this.newWaitingMessages = newWaitingMessages;
+        this.waitingMessages = waitingMessages;
     }
 
     public void receive() throws IOException {
-        byte buf[] = new byte[1024];
-        DatagramPacket packet = new DatagramPacket(buf, 1024);
+        byte buf[] = new byte[BUFSIZE];
+        DatagramPacket packet = new DatagramPacket(buf, BUFSIZE);
+        //receive message from socket
         socket.receive(packet);
-        InputMessage m = MessageCreator.createMessage(packet.getData());
-        for (int i = 0; i < 5; i++) {
-            Iterator newIter = newWaitingMessages.iterator();
-            while (newIter.hasNext()) {
-                if (((IMessage) newIter.next()).getId() == m.getId()) {
-                    //waitingMessage.remove(iter.next());
-                } else {
-                    long delta = ((Tuple) newIter.next()).z - System.currentTimeMillis();
-                    if (delta > 10000) {
-                        //remove
-                        break;
-                    }
-                    sender.getMessageToSend().add((IMessage) newIter.next());
+        //create input message
+        InputMessage inputMessage = MessageCreator.createMessage(packet.getData());
+
+        //searching input message id in list of message, which are waiting for acknowledgement
+        Iterator<Tuple> tupleIter = waitingMessages.iterator();
+        while (tupleIter.hasNext()) {
+            if ((tupleIter.next()).message.getId().equals(inputMessage.getId())) {
+                tupleIter.remove();
+            } else {
+                long delta = (tupleIter.next()).firstSendTime - System.currentTimeMillis();
+                if (delta > MAXWAITINGTIME) {
+                    tupleIter.remove();
+                    break;
                 }
-                newIter = (Iterator) newIter.next();
             }
         }
+
     }
 
     @Override
