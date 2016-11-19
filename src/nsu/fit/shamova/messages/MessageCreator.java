@@ -1,6 +1,5 @@
 package nsu.fit.shamova.messages;
 
-import nsu.fit.shamova.messages.impl.AckMessage;
 import nsu.fit.shamova.messages.impl.InputMessage;
 
 import java.net.InetAddress;
@@ -30,6 +29,8 @@ public class MessageCreator {
         InetAddress addr = InetAddress.getByAddress(a);
         offset += 4;
         int port = ByteBuffer.wrap(msg, offset, 4).getInt();
-        return new InputMessage(type, addr, port, id);
+        InetAddress parent = null;
+        String txt = null;
+        return new InputMessage(id, type, addr, port, txt);
     }
 }

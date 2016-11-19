@@ -12,8 +12,8 @@ public class DisconnectMessage extends Message {
         super(UUID.randomUUID(), addr, port, Type.DISCONNECTED);
     }
 
-    @Override
+  /*  @Override
     public byte[] getByteMessage() {
         return makeHeader();
-    }
+    }*/
 }

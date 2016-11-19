@@ -11,9 +11,4 @@ public class ConnectMessage extends Message {
     public ConnectMessage(InetAddress addr, int port) {
         super(UUID.randomUUID(), addr, port, Type.CONNECTED);
     }
-
-    @Override
-    public byte[] getByteMessage() {
-        return makeHeader();
-    }
 }

@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public abstract class Message implements IMessage {
-    protected final UUID id;
+    protected UUID id;
     protected final InetAddress addr;
     protected final int port;
     protected final Type type;
@@ -44,6 +44,10 @@ public abstract class Message implements IMessage {
         bb.putLong(getId().getMostSignificantBits());
         bb.putLong(getId().getLeastSignificantBits());
         return bb.array();
+    }
+
+    public byte[] getByteMessage() {
+        return makeHeader();
     }
 
     public byte[] makeHeader() {

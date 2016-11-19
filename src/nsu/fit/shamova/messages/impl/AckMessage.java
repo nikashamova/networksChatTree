@@ -8,14 +8,14 @@ import java.util.UUID;
 
 public class AckMessage extends Message {
 
-    public AckMessage(int port, InetAddress addr, UUID id) {
+    public AckMessage(UUID id, int port, InetAddress addr) {
         super(id, addr, port, Type.ACK);
         this.id = id;
     }
 
-
+/*
     @Override
     public byte[] getByteMessage() {
         return makeHeader();
-    }
+    }*/
 }

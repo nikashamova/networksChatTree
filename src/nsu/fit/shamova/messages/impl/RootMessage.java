@@ -11,9 +11,4 @@ public class RootMessage extends Message{
     public RootMessage(InetAddress addr, int port) {
         super(UUID.randomUUID(), addr, port, Type.ROOT);
     }
-
-    @Override
-    public byte[] getByteMessage() {
-        return makeHeader();
-    }
 }
