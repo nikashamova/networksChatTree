@@ -16,8 +16,6 @@ public class Node {
     public Node(InetAddress addr, int port) {
         this.addr = addr;
         this.port = port;
-        new Thread(new Sender(this)).run();
-        new Thread(new Receiver(this)).run();
     }
 
     public DatagramSocket getSocket() {

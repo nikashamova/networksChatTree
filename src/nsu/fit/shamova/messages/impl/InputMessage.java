@@ -16,7 +16,7 @@ public class InputMessage implements IMessage {
     private int port;
     private UUID id;
 
-    public InputMessage(Type type, InetAddress addr, int port, UUID id) {
+    public InputMessage(UUID id, Type type, InetAddress addr, int port) {
         this.type = type;
         this.addr = addr;
         this.port = port;

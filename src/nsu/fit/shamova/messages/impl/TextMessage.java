@@ -6,11 +6,12 @@ import nsu.fit.shamova.messages.Type;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.UUID;
 
 public class TextMessage extends Message{
     String txt;
     TextMessage(InetAddress addr, int port, String txt) {
-        super(addr, port, Type.MSG);
+        super(UUID.randomUUID(), addr, port, Type.MSG);
         this.txt = txt;
     }
 

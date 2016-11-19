@@ -4,11 +4,12 @@ import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.Type;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 public class RootMessage extends Message{
 
     public RootMessage(InetAddress addr, int port) {
-        super(addr, port, Type.ROOT);
+        super(UUID.randomUUID(), addr, port, Type.ROOT);
     }
 
     @Override

@@ -7,12 +7,13 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public abstract class Message implements IMessage {
-    private final UUID id = UUID.randomUUID();
-    private InetAddress addr;
-    private int port;
-    private final Type type;
+    protected final UUID id;
+    protected final InetAddress addr;
+    protected final int port;
+    protected final Type type;
 
-    public Message(InetAddress addr, int port, Type type) {
+    public Message(UUID id, InetAddress addr, int port, Type type) {
+        this.id = id;
         this.addr = addr;
         this.port = port;
         this.type = type;
