@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 public interface IMessage {
-    Type getType();
+    MessageType getType();
     //InetAddress getSender();
     int getPort();
     UUID getId();

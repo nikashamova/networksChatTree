@@ -1,22 +1,17 @@
 package nsu.fit.shamova;
 
-import nsu.fit.shamova.messages.Message;
-import nsu.fit.shamova.messages.impl.AckMessage;
-import nsu.fit.shamova.messages.impl.InputMessage;
-import nsu.fit.shamova.messages.impl.ParentMessage;
 import nsu.fit.shamova.messages.impl.TextMessage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import static nsu.fit.shamova.messages.Type.ACK;
-
-public class Node {
+public class Node implements Runnable{
 
     private DatagramSocket socket;
     private int port;
@@ -24,31 +19,50 @@ public class Node {
     private Host parent;
     private boolean root = false;
     private final Set<Host> children = new HashSet<>();
+    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     public Node(int port, InetAddress parentAddr, int parentPort) throws SocketException {
         this.port = port;
         socket = new DatagramSocket(port);
         socket.setSoTimeout(50);
-        parent.setAddress(parentAddr);
-        parent.setPort(parentPort);
+        parent = new Host(parentAddr, parentPort);
+        controller = new Controller(this);
         new Thread(controller).start();
-        start();
+        new Thread(new DisconnectHook(this)).start();
+        //start();
     }
 
     public Node(int port) throws SocketException {
         this.port = port;
         socket = new DatagramSocket(port);
         socket.setSoTimeout(50);
+        parent = null;
         System.out.println("helloooooo");
         root = true;
         controller = new Controller(this);
-        new Thread(controller).start();
-        start();
+        (new Thread(controller)).start();
+//        start();
     }
 
-    void start() {
+    public void run() {
         while (true) {
             //read from terminal
+            try {
+                String txt = reader.readLine();
+                if (txt == null || txt.equals("")) {
+                    continue;
+                }
+                for (Host child : children) {
+                    TextMessage message = new TextMessage(child.getPort(), txt, child.getAddress());
+                    controller.getMessageToSend().add(new MessageHolder(message, 0, System.currentTimeMillis()));
+                }
+                if (!root) {
+                    TextMessage message = new TextMessage(parent.getPort(), txt, parent.getAddress());
+                    controller.getMessageToSend().add(new MessageHolder(message, 0, System.currentTimeMillis()));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

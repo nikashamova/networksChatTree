@@ -16,7 +16,7 @@ public class MessageCreator {
 
     public static InputMessage createMessage(byte[] msg) throws UnknownHostException {
         int offset = 0;
-        Type type = Type.getByBate(msg[0]);
+        MessageType type = MessageType.getByBate(msg[0]);
         offset++;
         ByteBuffer bb = ByteBuffer.wrap(msg, offset, 16);
         long high = bb.getLong();

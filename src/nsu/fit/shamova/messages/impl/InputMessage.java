@@ -1,7 +1,7 @@
 package nsu.fit.shamova.messages.impl;
 
 import nsu.fit.shamova.messages.IMessage;
-import nsu.fit.shamova.messages.Type;
+import nsu.fit.shamova.messages.MessageType;
 
 import java.net.InetAddress;
 import java.util.UUID;
@@ -10,7 +10,7 @@ import java.util.UUID;
  * Created by Ника on 13.11.2016.
  */
 public class InputMessage implements IMessage {
-    private Type type;
+    private MessageType type;
     //private InetAddress sender;
     private int port;
     private UUID id;
@@ -18,7 +18,7 @@ public class InputMessage implements IMessage {
 
    // private InetAddress parent;
 
-    public InputMessage(UUID id, Type type, /*InetAddress sender,*/ int port, /*InetAddress parent,*/ String msg) {
+    public InputMessage(UUID id, MessageType type, /*InetAddress sender,*/ int port, /*InetAddress parent,*/ String msg) {
         this.type = type;
       //  this.sender = sender;
         this.port = port;
@@ -28,7 +28,7 @@ public class InputMessage implements IMessage {
     }
 
     @Override
-    public Type getType() {
+    public MessageType getType() {
         return type;
     }
 
@@ -57,6 +57,11 @@ public class InputMessage implements IMessage {
 
     @Override
     public byte[] getByteMessage() {
+        return null;
+    }
+
+    @Override
+    public InetAddress getReceiver() {
         return null;
     }
 }

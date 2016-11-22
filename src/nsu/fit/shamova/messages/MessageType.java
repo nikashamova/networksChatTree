@@ -1,6 +1,6 @@
 package nsu.fit.shamova.messages;
 
-public enum Type {
+public enum MessageType {
     ACK, MSG, PARENT, DISCONNECTED, ROOT, CONNECTED;
     private byte t;
 
@@ -13,20 +13,20 @@ public enum Type {
         CONNECTED.t = 5;
     }
 
-    public static Type getByBate(byte a) {
+    public static MessageType getByBate(byte a) {
         switch (a) {
             case 0:
-                return Type.ACK;
+                return MessageType.ACK;
             case 1:
-                return Type.MSG;
+                return MessageType.MSG;
             case 2:
-                return Type.PARENT;
+                return MessageType.PARENT;
             case 3:
-                return Type.DISCONNECTED;
+                return MessageType.DISCONNECTED;
             case 4:
-                return Type.ROOT;
+                return MessageType.ROOT;
             case 5:
-                return Type.CONNECTED;
+                return MessageType.CONNECTED;
         }
         return null;
     }

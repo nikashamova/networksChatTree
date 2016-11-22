@@ -1,42 +1,46 @@
 package nsu.fit.shamova;
 
-import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.MessageCreator;
 import nsu.fit.shamova.messages.impl.AckMessage;
 import nsu.fit.shamova.messages.impl.InputMessage;
-import nsu.fit.shamova.messages.impl.ParentMessage;
 import nsu.fit.shamova.messages.impl.TextMessage;
-import sun.plugin2.jvm.CircularByteBuffer;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
-import static nsu.fit.shamova.messages.Type.ACK;
 
-public class Controller implements Runnable{
-    private List<MessageHolder> messageToSend = new ArrayList();
+import static nsu.fit.shamova.messages.MessageType.ACK;
+
+public class Controller implements Runnable {
+    private Queue<MessageHolder> messageToSend = new ArrayBlockingQueue<>(1000);
     private List<MessageHolder> waitingMessages = new ArrayList();
     private DatagramSocket socket;
-    private final static int BUFSIZE = 1024;
-    private final static long MAXWAITINGTIME = 10000;
-    private final static int MAXCOUNTOFSENDINGTRY = 10;
+    public final static int BUFSIZE = 512;
+    public final static long MAXWAITINGTIME = 10000;
+    public final static int MAXCOUNTOFSENDINGTRY = 10;
+    public final static int QUEUESIZE = 30;
     private final static int SEND = 5;
-    Node node;
+    private final Node node;
+    private final CircularFifoQueue<UUID> receivedMessages = new CircularFifoQueue<>(QUEUESIZE);
 
 
     Controller(Node node) {
         this.node = node;
+        receivedMessages.parallelStream();
         this.socket = node.getSocket();
     }
 
     void send() throws IOException {
-        for (MessageHolder tmp : messageToSend) {
+        Iterator<MessageHolder> iter = messageToSend.iterator();
+        while (iter.hasNext()) {
+            MessageHolder tmp = iter.next();
+        //}
+        //for (MessageHolder tmp : messageToSend) {
             if (tmp.countOfTry > MAXCOUNTOFSENDINGTRY || System.currentTimeMillis() - tmp.firstSendTime > MAXWAITINGTIME) {
-                messageToSend.remove(tmp);
+                //messageToSend.remove(tmp);
+                iter.remove();
                 continue;
             }
             byte[] msg = tmp.message.getByteMessage();
@@ -65,7 +69,12 @@ public class Controller implements Runnable{
             socket.receive(packet);
             //create input message
             inputMessage = MessageCreator.createMessage(packet.getData());
-            handle(inputMessage);
+            if (inputMessage.getType() != ACK) {
+                if(receivedMessages.contains(inputMessage.getId())) {
+                    receivedMessages.add(inputMessage.getId());
+                    handle(inputMessage);
+                }
+            }
         } catch (IOException e) {
             return null;
         }
@@ -84,10 +93,15 @@ public class Controller implements Runnable{
         return inputMessage;
     }
 
-    public void shuffle() {
-        for (MessageHolder tmp : waitingMessages) {
+    private void shuffle() {
+        Iterator<MessageHolder> iterator = waitingMessages.iterator();
+        while (iterator.hasNext()) {
+            MessageHolder tmp = iterator.next();
+        //}
+        //for (MessageHolder tmp : waitingMessages) {
             messageToSend.add(tmp);
-            waitingMessages.remove(tmp);
+            iterator.remove();
+            //waitingMessages.remove(tmp);
         }
     }
 
@@ -108,8 +122,15 @@ public class Controller implements Runnable{
     private void textHandler(InputMessage message) {
         System.out.println(message.getTxt());
         for (Host child : node.getChildren()) {
+            if (child.equals(new Host(socket.getInetAddress(), socket.getPort()))) {
+                continue;
+            }
             TextMessage childMessage = new TextMessage(message.getId(), child.getPort(), message.getTxt(), child.getAddress());
             messageToSend.add(new MessageHolder(childMessage, 0, System.currentTimeMillis()));
+        }
+        if (!node.isRoot() && !node.getParent().equals(new Host(socket.getInetAddress(), socket.getPort()))) {
+            TextMessage parentMessage = new TextMessage(message.getId(), node.getParent().getPort(), message.getTxt(), node.getParent().getAddress());
+            messageToSend.add(new MessageHolder(parentMessage, 0, System.currentTimeMillis()));
         }
     }
 
@@ -120,7 +141,10 @@ public class Controller implements Runnable{
         InetAddress discAddr = socket.getInetAddress();
         int discPort = socket.getPort();
         Host discHost = new Host(discAddr, discPort);
-        for (Host child : node.getChildren()) {
+        Iterator<Host> iterator = node.getChildren().iterator();
+        while (iterator.hasNext()) {
+            Host child = iterator.next();
+        //for (Host child : node.getChildren()) {
             if (child.equals(discHost)) {
                 node.getChildren().remove(child);
                 break;
@@ -129,7 +153,9 @@ public class Controller implements Runnable{
     }
 
     void handle(InputMessage message) throws IOException {
-        messageToSend.add(new MessageHolder(new AckMessage(message.getId(), socket.getPort(), socket.getInetAddress()), 0, System.currentTimeMillis()));
+        if (message.getType() != ACK) {
+            messageToSend.add(new MessageHolder(new AckMessage(message.getId(), socket.getPort(), socket.getInetAddress()), 0, System.currentTimeMillis()));
+        }
         switch (message.getType()) {
             case MSG:
                 textHandler(message);
@@ -147,11 +173,9 @@ public class Controller implements Runnable{
                 connectHandler(message);
                 break;
         }
-        if (message.getType() != ACK) {
-        }
     }
 
-    public List<MessageHolder> getMessageToSend() {
+    public Queue<MessageHolder> getMessageToSend() {
         return messageToSend;
     }
 

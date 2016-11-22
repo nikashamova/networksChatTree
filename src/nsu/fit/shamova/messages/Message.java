@@ -9,7 +9,7 @@ import java.util.UUID;
 public abstract class Message implements IMessage {
     protected UUID id;
     protected final int port;
-    protected final Type type;
+    protected final MessageType type;
     protected InetAddress receiver;
 
     public InetAddress getReceiver() {
@@ -20,7 +20,7 @@ public abstract class Message implements IMessage {
         this.receiver = receiver;
     }
 
-    public Message(UUID id, int port, Type type, InetAddress receiver) {
+    public Message(UUID id, int port, MessageType type, InetAddress receiver) {
         this.id = id;
         this.port = port;
         this.type = type;
@@ -29,7 +29,7 @@ public abstract class Message implements IMessage {
     }
 
     @Override
-    public Type getType() {
+    public MessageType getType() {
         return type;
     }
 

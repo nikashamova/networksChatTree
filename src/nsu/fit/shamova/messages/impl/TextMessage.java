@@ -1,7 +1,7 @@
 package nsu.fit.shamova.messages.impl;
 
 import nsu.fit.shamova.messages.Message;
-import nsu.fit.shamova.messages.Type;
+import nsu.fit.shamova.messages.MessageType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,12 +11,12 @@ import java.util.UUID;
 public class TextMessage extends Message{
     String txt;
     public TextMessage(int port, String txt, InetAddress receiver) {
-        super(UUID.randomUUID(), port, Type.MSG, receiver);
+        super(UUID.randomUUID(), port, MessageType.MSG, receiver);
         this.txt = txt;
     }
 
     public TextMessage(UUID id, int port, String txt, InetAddress receiver) {
-        super(id, port, Type.MSG, receiver);
+        super(id, port, MessageType.MSG, receiver);
         this.txt = txt;
     }
 
