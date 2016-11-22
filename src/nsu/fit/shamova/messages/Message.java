@@ -8,15 +8,24 @@ import java.util.UUID;
 
 public abstract class Message implements IMessage {
     protected UUID id;
-    protected final InetAddress addr;
     protected final int port;
     protected final Type type;
+    protected InetAddress receiver;
 
-    public Message(UUID id, InetAddress addr, int port, Type type) {
+    public InetAddress getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(InetAddress receiver) {
+        this.receiver = receiver;
+    }
+
+    public Message(UUID id, int port, Type type, InetAddress receiver) {
         this.id = id;
-        this.addr = addr;
         this.port = port;
         this.type = type;
+        this.receiver = receiver;
+
     }
 
     @Override
@@ -24,10 +33,10 @@ public abstract class Message implements IMessage {
         return type;
     }
 
-    @Override
+ /*   @Override
     public InetAddress getSender() {
         return addr;
-    }
+    }*/
 
     @Override
     public int getPort() {
@@ -56,7 +65,7 @@ public abstract class Message implements IMessage {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(getType().getT());
             outputStream.write(idToByte());
-            outputStream.write(getSender().getAddress());
+            //outputStream.write(getSender().getAddress());
             outputStream.write(ByteBuffer.allocate(4).putInt(getPort()).array());
             header = outputStream.toByteArray();
         } catch (IOException e) {

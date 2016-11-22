@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public class DisconnectMessage extends Message {
 
-    public DisconnectMessage(InetAddress addr, int port) {
-        super(UUID.randomUUID(), addr, port, Type.DISCONNECTED);
+    public DisconnectMessage(InetAddress receiver, int port) {
+        super(UUID.randomUUID(), port, Type.DISCONNECTED, receiver);
     }
 
   /*  @Override

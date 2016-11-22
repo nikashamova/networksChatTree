@@ -3,16 +3,14 @@ package nsu.fit.shamova.messages.impl;
 import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.Type;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.UUID;
 
 public class ParentMessage extends Message {
     //private InetAddress parent;
 
-    public ParentMessage(InetAddress addr, int port, InetAddress parent) {
-        super(UUID.randomUUID(), addr, port, Type.PARENT);
+    public ParentMessage(int port, InetAddress receiver) {
+        super(UUID.randomUUID(), port, Type.PARENT, receiver);
       //  this.parent = parent;
     }
 

@@ -5,8 +5,9 @@ import java.util.UUID;
 
 public interface IMessage {
     Type getType();
-    InetAddress getSender();
+    //InetAddress getSender();
     int getPort();
     UUID getId();
     byte[] getByteMessage();
+    InetAddress getReceiver();
 }

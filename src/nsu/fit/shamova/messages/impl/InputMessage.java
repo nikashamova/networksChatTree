@@ -11,16 +11,16 @@ import java.util.UUID;
  */
 public class InputMessage implements IMessage {
     private Type type;
-    private InetAddress sender;
+    //private InetAddress sender;
     private int port;
     private UUID id;
     private String txt;
 
    // private InetAddress parent;
 
-    public InputMessage(UUID id, Type type, InetAddress sender, int port, /*InetAddress parent,*/ String msg) {
+    public InputMessage(UUID id, Type type, /*InetAddress sender,*/ int port, /*InetAddress parent,*/ String msg) {
         this.type = type;
-        this.sender = sender;
+      //  this.sender = sender;
         this.port = port;
         this.id = id;
         //this.parent = parent;
@@ -40,11 +40,11 @@ public class InputMessage implements IMessage {
         return txt;
     }
 
-    @Override
+    /*@Override
     public InetAddress getSender() {
         return sender;
     }
-
+*/
     @Override
     public int getPort() {
         return port;

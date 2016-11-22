@@ -1,12 +1,17 @@
 package nsu.fit.shamova;
+
+import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.impl.AckMessage;
 import nsu.fit.shamova.messages.impl.InputMessage;
+import nsu.fit.shamova.messages.impl.ParentMessage;
 import nsu.fit.shamova.messages.impl.TextMessage;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static nsu.fit.shamova.messages.Type.ACK;
@@ -14,78 +19,36 @@ import static nsu.fit.shamova.messages.Type.ACK;
 public class Node {
 
     private DatagramSocket socket;
-    private InetAddress addr;
     private int port;
-    private Node parent;
+    private Controller controller;
+    private Host parent;
     private boolean root = false;
-    private final Set<Node> children = new HashSet<>();
-    Controller controller = new Controller(socket);
+    private final Set<Host> children = new HashSet<>();
 
-    public Node(InetAddress addr, int port, Node parent) {
-        this.addr = addr;
+    public Node(int port, InetAddress parentAddr, int parentPort) throws SocketException {
         this.port = port;
-        this.parent = parent;
+        socket = new DatagramSocket(port);
+        socket.setSoTimeout(50);
+        parent.setAddress(parentAddr);
+        parent.setPort(parentPort);
+        new Thread(controller).start();
+        start();
     }
 
-    void handle(InputMessage message) throws IOException {
-        switch (message.getType()) {
-            case MSG:
-                textHandler(message);
-                break;
-            case PARENT:
-                parentHandler(message);
-                break;
-            case DISCONNECTED:
-                disconnectHandler(message);
-                break;
-            case ROOT:
-                rootHandler(message);
-                break;
-            case CONNECTED:
-                connectHandler(message);
-                break;
-        }
-        if (message.getType() != ACK) {
-            controller.getMessageToSend().add(new MessageHolder(new AckMessage(message.getId(), port, addr), 0, System.currentTimeMillis()));
-        }
+    public Node(int port) throws SocketException {
+        this.port = port;
+        socket = new DatagramSocket(port);
+        socket.setSoTimeout(50);
+        System.out.println("helloooooo");
+        root = true;
+        controller = new Controller(this);
+        new Thread(controller).start();
+        start();
     }
 
-    private void connectHandler(InputMessage message) {
-        InetAddress childAddr = message.getSender();
-        int childPort = message.getPort();
-        children.add(new Node(childAddr, childPort, this));
-
-    }
-
-    private void disconnectHandler(InputMessage message) {
-        InetAddress discAddr = message.getSender();
-        for (Node child : children) {
-            if (child.getAddr().equals(discAddr)) {
-                children.remove(child);
-                break;
-            }
-        }
-    }
-
-    private void parentHandler(InputMessage message) {
-        //WHAAAAAAAAAAAAAAAT
-        InetAddress parent = message.getSender();
-        int port = message.getPort();
-        this.parent.setAddr(parent);
-        this.parent.setPort(message.getPort());
-        //this.parent.se
-    }
-
-    private void rootHandler(InputMessage message) throws IOException {
-        this.root = true;
-        controller.getMessageToSend().add(new MessageHolder(new AckMessage(message.getId(), port, addr), 0, System.currentTimeMillis()));
-    }
-
-    private void textHandler(InputMessage message) {
-        System.out.println(addr + " " + message.getTxt());
-        for (Node child : children) {
-            TextMessage childMessage = new TextMessage(message.getId(), message.getSender(), message.getPort(), message.getTxt());
-            child.getController().getMessageToSend().add(new MessageHolder(childMessage, 0, System.currentTimeMillis()));
+    void start() {
+        while (true) {
+            //read from terminal
         }
     }
 
@@ -101,14 +64,6 @@ public class Node {
         this.socket = socket;
     }
 
-    public Node getParent() {
-        return parent;
-    }
-
-    public void setRoot(Node root) {
-        this.parent = root;
-    }
-
     public boolean isRoot() {
         return root;
     }
@@ -117,16 +72,8 @@ public class Node {
         root = parent;
     }
 
-    public Set<Node> getChildren() {
+    public Set<Host> getChildren() {
         return children;
-    }
-
-    public InetAddress getAddr() {
-        return addr;
-    }
-
-    public void setAddr(InetAddress addr) {
-        this.addr = addr;
     }
 
     public int getPort() {
@@ -135,5 +82,21 @@ public class Node {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Host getParent() {
+        return parent;
+    }
+
+    public void setParent(Host parent) {
+        this.parent = parent;
+    }
+
+    public void setRoot(boolean root) {
+        this.root = root;
     }
 }

@@ -24,13 +24,13 @@ public class MessageCreator {
         UUID id = new UUID(high, low);
         System.out.println(id.toString());
         offset += Long.BYTES * 2;
-        byte[] a = new byte[4];
+       /* byte[] a = new byte[4];
         System.arraycopy(msg, offset, a, 0, 4);
         InetAddress addr = InetAddress.getByAddress(a);
-        offset += 4;
+        offset += 4;*/
         int port = ByteBuffer.wrap(msg, offset, 4).getInt();
         InetAddress parent = null;
         String txt = null;
-        return new InputMessage(id, type, addr, port, txt);
+        return new InputMessage(id, type, /*addr,*/ port, txt);
     }
 }
