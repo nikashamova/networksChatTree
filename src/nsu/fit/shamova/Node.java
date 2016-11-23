@@ -1,5 +1,7 @@
 package nsu.fit.shamova;
 
+import nsu.fit.shamova.messages.MessageHolder;
+import nsu.fit.shamova.messages.impl.ConnectMessage;
 import nsu.fit.shamova.messages.impl.TextMessage;
 
 import java.io.BufferedReader;
@@ -13,11 +15,11 @@ import java.util.Set;
 
 public class Node implements Runnable{
 
-    private DatagramSocket socket;
+    private final DatagramSocket socket;
+    private final Controller controller;
     private int port;
-    private Controller controller;
     private Host parent;
-    private boolean root = false;
+    private boolean root;
     private final Set<Host> children = new HashSet<>();
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -27,8 +29,9 @@ public class Node implements Runnable{
         socket.setSoTimeout(50);
         parent = new Host(parentAddr, parentPort);
         controller = new Controller(this);
+        root = false;
         new Thread(controller).start();
-        new Thread(new DisconnectHook(this)).start();
+        controller.getMessageToSend().add(new MessageHolder(new ConnectMessage(parentAddr, parentPort)));
         //start();
     }
 
@@ -53,12 +56,12 @@ public class Node implements Runnable{
                     continue;
                 }
                 for (Host child : children) {
-                    TextMessage message = new TextMessage(child.getPort(), txt, child.getAddress());
-                    controller.getMessageToSend().add(new MessageHolder(message, 0, System.currentTimeMillis()));
+                    TextMessage message = new TextMessage(child.getAddress(), child.getPort(), txt);
+                    controller.getMessageToSend().add(new MessageHolder(message));
                 }
                 if (!root) {
-                    TextMessage message = new TextMessage(parent.getPort(), txt, parent.getAddress());
-                    controller.getMessageToSend().add(new MessageHolder(message, 0, System.currentTimeMillis()));
+                    TextMessage message = new TextMessage(parent.getAddress(), parent.getPort(), txt);
+                    controller.getMessageToSend().add(new MessageHolder(message));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -74,16 +77,16 @@ public class Node implements Runnable{
         return socket;
     }
 
-    public void setSocket(DatagramSocket socket) {
-        this.socket = socket;
-    }
-
     public boolean isRoot() {
         return root;
     }
 
-    public void setParent(boolean parent) {
-        root = parent;
+    /*public void setParent(boolean youAreNewRoot) {
+        root = youAreNewRoot;
+    }*/
+
+    public void setParent(Host parent) {
+        this.parent = parent;
     }
 
     public Set<Host> getChildren() {
@@ -98,16 +101,8 @@ public class Node implements Runnable{
         this.port = port;
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
-
     public Host getParent() {
         return parent;
-    }
-
-    public void setParent(Host parent) {
-        this.parent = parent;
     }
 
     public void setRoot(boolean root) {

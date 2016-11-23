@@ -6,25 +6,22 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-public abstract class Message implements IMessage {
+public abstract class Message implements OutputMessage {
     protected UUID id;
-    protected final int port;
     protected final MessageType type;
-    protected InetAddress receiver;
+    protected final InetAddress receiverAddress;
+    protected final int receiverPort;
 
-    public InetAddress getReceiver() {
-        return receiver;
+    public InetAddress getReceiverAddress() {
+        return receiverAddress;
     }
 
-    public void setReceiver(InetAddress receiver) {
-        this.receiver = receiver;
-    }
 
-    public Message(UUID id, int port, MessageType type, InetAddress receiver) {
-        this.id = id;
-        this.port = port;
+    public Message(UUID id, MessageType type, InetAddress receiverAddress, int receiverPort) {
         this.type = type;
-        this.receiver = receiver;
+        this.id = id;
+        this.receiverAddress = receiverAddress;
+        this.receiverPort = receiverPort;
 
     }
 
@@ -38,9 +35,8 @@ public abstract class Message implements IMessage {
         return addr;
     }*/
 
-    @Override
-    public int getPort() {
-        return port;
+    public int getReceiverPort() {
+        return receiverPort;
     }
 
     @Override
@@ -63,10 +59,10 @@ public abstract class Message implements IMessage {
         byte[] header = null;
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(getType().getT());
+            outputStream.write(type.getT());
             outputStream.write(idToByte());
-            //outputStream.write(getSender().getAddress());
-            outputStream.write(ByteBuffer.allocate(4).putInt(getPort()).array());
+            outputStream.write(receiverAddress.getAddress());
+            outputStream.write(ByteBuffer.allocate(4).putInt(getReceiverPort()).array());
             header = outputStream.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();

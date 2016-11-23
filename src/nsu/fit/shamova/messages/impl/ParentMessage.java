@@ -6,15 +6,16 @@ import nsu.fit.shamova.messages.MessageType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public class ParentMessage extends Message {
     private InetAddress parentAddr;
     private int parentPort;
 
-    public ParentMessage(int port, InetAddress receiver, InetAddress parentAddr, int parentPort) {
-        super(UUID.randomUUID(), port, MessageType.PARENT, receiver);
-        this.parentAddr = parentAddr;
+    public ParentMessage(InetAddress receiverAddress, int receiverPort, InetAddress parentAddress, int parentPort) {
+        super(UUID.randomUUID(), MessageType.PARENT, receiverAddress, receiverPort);
+        this.parentAddr = parentAddress;
         this.parentPort = parentPort;
     }
 
@@ -25,7 +26,7 @@ public class ParentMessage extends Message {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(makeHeader());
             outputStream.write(parentAddr.getAddress());
-            outputStream.write(parentPort);
+            outputStream.write(ByteBuffer.allocate(4).putInt(parentPort).array());
             result = outputStream.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();

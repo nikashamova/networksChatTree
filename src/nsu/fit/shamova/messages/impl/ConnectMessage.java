@@ -8,7 +8,12 @@ import java.util.UUID;
 
 public class ConnectMessage extends Message {
 
-    public ConnectMessage(InetAddress addr, int port, InetAddress receiver) {
-        super(UUID.randomUUID(), port, MessageType.CONNECTED, receiver);
+    public ConnectMessage(InetAddress receiverAddress, int receiverPort) {
+        super(
+                UUID.randomUUID(),
+                MessageType.CONNECTED,
+                receiverAddress,
+                receiverPort
+        );
     }
 }

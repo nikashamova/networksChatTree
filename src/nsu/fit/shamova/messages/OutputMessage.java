@@ -3,11 +3,11 @@ package nsu.fit.shamova.messages;
 import java.net.InetAddress;
 import java.util.UUID;
 
-public interface IMessage {
+public interface OutputMessage {
     MessageType getType();
     //InetAddress getSender();
-    int getPort();
+    int getReceiverPort();
     UUID getId();
-    byte[] getByteMessage();
-    InetAddress getReceiver();
+    //byte[] getByteMessage();
+    InetAddress getReceiverAddress();
 }

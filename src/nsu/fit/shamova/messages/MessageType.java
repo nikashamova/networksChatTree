@@ -1,12 +1,12 @@
 package nsu.fit.shamova.messages;
 
 public enum MessageType {
-    ACK, MSG, PARENT, DISCONNECTED, ROOT, CONNECTED;
+    ACK, TXT, PARENT, DISCONNECTED, ROOT, CONNECTED;
     private byte t;
 
     static {
         ACK.t = 0;
-        MSG.t = 1;
+        TXT.t = 1;
         PARENT.t = 2;
         DISCONNECTED.t = 3;
         ROOT.t = 4;
@@ -18,7 +18,7 @@ public enum MessageType {
             case 0:
                 return MessageType.ACK;
             case 1:
-                return MessageType.MSG;
+                return MessageType.TXT;
             case 2:
                 return MessageType.PARENT;
             case 3:

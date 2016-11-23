@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class RootMessage extends Message{
 
-    public RootMessage(int port, InetAddress receiver) {
-        super(UUID.randomUUID(), port, MessageType.ROOT, receiver);
+    public RootMessage(InetAddress receiverAddress, int receiverPort) {
+        super(UUID.randomUUID(), MessageType.ROOT, receiverAddress, receiverPort);
     }
 }

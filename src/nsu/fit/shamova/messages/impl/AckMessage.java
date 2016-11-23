@@ -9,14 +9,14 @@ import java.util.UUID;
 
 public class AckMessage extends Message {
 
-    public AckMessage(UUID id, int port, InetAddress receiver) {
-        super(id, port, MessageType.ACK, receiver);
+    public AckMessage(UUID id, InetAddress receiverAddress, int receiverPort) {
+        super(
+                id,
+                MessageType.ACK,
+                receiverAddress,
+                receiverPort
+        );
         this.id = id;
     }
 
-/*
-    @Override
-    public byte[] getByteMessage() {
-        return makeHeader();
-    }*/
 }

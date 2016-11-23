@@ -1,29 +1,40 @@
 package nsu.fit.shamova.messages.impl;
 
-import nsu.fit.shamova.messages.IMessage;
+import nsu.fit.shamova.messages.OutputMessage;
 import nsu.fit.shamova.messages.MessageType;
 
 import java.net.InetAddress;
 import java.util.UUID;
 
-/**
- * Created by Ника on 13.11.2016.
- */
-public class InputMessage implements IMessage {
+public class InputMessage implements OutputMessage {
     private MessageType type;
-    //private InetAddress sender;
-    private int port;
+    private InetAddress receiverAddress;
+    private int receiverPort;
     private UUID id;
+    private InetAddress parentAdders;
+    private int parentPort;
     private String txt;
 
-   // private InetAddress parent;
+   // private InetAddress parentAdders;
 
-    public InputMessage(UUID id, MessageType type, /*InetAddress sender,*/ int port, /*InetAddress parent,*/ String msg) {
+    public int getParentPort() {
+        return parentPort;
+    }
+
+    public InputMessage(
+            UUID id,
+            MessageType type,
+            InetAddress receiverAddress,
+            int receiverPort,
+            InetAddress parentAdders,
+            int parentPort,
+            String msg) {
         this.type = type;
-      //  this.sender = sender;
-        this.port = port;
+        this.receiverAddress = receiverAddress;
+        this.receiverPort = receiverPort;
         this.id = id;
-        //this.parent = parent;
+        this.parentAdders = parentAdders;
+        this.parentPort = parentPort;
         this.txt = msg;
     }
 
@@ -32,22 +43,15 @@ public class InputMessage implements IMessage {
         return type;
     }
 
-    /*public InetAddress getParent() {
-        return parent;
+    public InetAddress getParentAdders() {
+        return parentAdders;
     }
-*/
     public String getTxt() {
         return txt;
     }
 
-    /*@Override
-    public InetAddress getSender() {
-        return sender;
-    }
-*/
-    @Override
-    public int getPort() {
-        return port;
+    public int getReceiverPort() {
+        return receiverPort;
     }
 
     @Override
@@ -55,13 +59,23 @@ public class InputMessage implements IMessage {
         return id;
     }
 
-    @Override
-    public byte[] getByteMessage() {
-        return null;
+
+    public void print() {
+        System.out.println("------------------------------------");
+        System.out.println(id.toString());
+        System.out.println(type);
+        System.out.println("receiver address: " + receiverAddress + " receiver port: " + receiverPort);
+        if (parentAdders != null) {
+            System.out.println("new parent is " + parentAdders + " " + parentPort);
+        }
+        if (txt != null && !txt.equals("")) {
+            System.out.println(txt);
+        }
+        System.out.println("------------------------------------");
+
     }
 
-    @Override
-    public InetAddress getReceiver() {
-        return null;
+    public InetAddress getReceiverAddress() {
+        return receiverAddress;
     }
 }

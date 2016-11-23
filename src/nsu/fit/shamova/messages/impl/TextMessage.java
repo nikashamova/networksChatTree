@@ -10,13 +10,13 @@ import java.util.UUID;
 
 public class TextMessage extends Message{
     String txt;
-    public TextMessage(int port, String txt, InetAddress receiver) {
-        super(UUID.randomUUID(), port, MessageType.MSG, receiver);
+    public TextMessage(InetAddress receiverAddress, int receiverPort, String txt) {
+        super(UUID.randomUUID(), MessageType.TXT, receiverAddress, receiverPort);
         this.txt = txt;
     }
 
-    public TextMessage(UUID id, int port, String txt, InetAddress receiver) {
-        super(id, port, MessageType.MSG, receiver);
+    public TextMessage(UUID id, InetAddress receiverAddress, int receiverPort, String txt) {
+        super(id, MessageType.TXT, receiverAddress, receiverPort);
         this.txt = txt;
     }
 
