@@ -13,7 +13,7 @@ import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Node implements Runnable{
+class Node implements Runnable{
 
     private final DatagramSocket socket;
     private final Controller controller;

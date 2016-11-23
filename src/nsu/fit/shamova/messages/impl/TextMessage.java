@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 public class TextMessage extends Message{
-    String txt;
+    private final String txt;
     public TextMessage(InetAddress receiverAddress, int receiverPort, String txt) {
         super(UUID.randomUUID(), MessageType.TXT, receiverAddress, receiverPort);
         this.txt = txt;

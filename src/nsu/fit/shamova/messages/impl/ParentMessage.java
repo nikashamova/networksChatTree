@@ -10,8 +10,8 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public class ParentMessage extends Message {
-    private InetAddress parentAddr;
-    private int parentPort;
+    private final InetAddress parentAddr;
+    private final int parentPort;
 
     public ParentMessage(InetAddress receiverAddress, int receiverPort, InetAddress parentAddress, int parentPort) {
         super(UUID.randomUUID(), MessageType.PARENT, receiverAddress, receiverPort);

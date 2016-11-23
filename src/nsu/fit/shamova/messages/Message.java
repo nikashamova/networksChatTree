@@ -44,7 +44,7 @@ public abstract class Message implements OutputMessage {
         return id;
     }
 
-    protected byte[] idToByte() {
+    private byte[] idToByte() {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(getId().getMostSignificantBits());
         bb.putLong(getId().getLeastSignificantBits());
@@ -55,7 +55,7 @@ public abstract class Message implements OutputMessage {
         return makeHeader();
     }
 
-    public byte[] makeHeader() {
+    protected byte[] makeHeader() {
         byte[] header = null;
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

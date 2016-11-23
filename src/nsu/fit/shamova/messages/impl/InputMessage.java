@@ -7,13 +7,13 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 public class InputMessage implements OutputMessage {
-    private MessageType type;
-    private InetAddress receiverAddress;
-    private int receiverPort;
-    private UUID id;
-    private InetAddress parentAdders;
-    private int parentPort;
-    private String txt;
+    private final MessageType type;
+    private final InetAddress receiverAddress;
+    private final int receiverPort;
+    private final UUID id;
+    private final InetAddress parentAdders;
+    private final int parentPort;
+    private final String txt;
 
    // private InetAddress parentAdders;
 

@@ -7,7 +7,7 @@ import nsu.fit.shamova.messages.impl.RootMessage;
 
 import java.util.Iterator;
 
-public class DisconnectHook implements Runnable {
+class DisconnectHook implements Runnable {
 
     private final Node node;
 

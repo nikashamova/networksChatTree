@@ -1,6 +1,5 @@
 package nsu.fit.shamova;
 
-import nsu.fit.shamova.messages.Message;
 import nsu.fit.shamova.messages.MessageCreator;
 import nsu.fit.shamova.messages.MessageHolder;
 import nsu.fit.shamova.messages.impl.AckMessage;
@@ -64,7 +63,7 @@ public class Controller implements Runnable {
     public void receive() {
         byte buf[] = new byte[BUFSIZE];
         DatagramPacket packet = new DatagramPacket(buf, BUFSIZE);
-        InputMessage inputMessage = null;
+        InputMessage inputMessage;
         try {
             //receive message from socket
             socket.receive(packet);
@@ -111,7 +110,7 @@ public class Controller implements Runnable {
         }
     }
 
-    private void connectHandler(InputMessage message, DatagramPacket packet) throws SocketException {
+    private void connectHandler(InputMessage message, DatagramPacket packet) {
         //System.out.println("new connection");
         node.getChildren().add(new Host(packet.getAddress(), packet.getPort()));
     }
