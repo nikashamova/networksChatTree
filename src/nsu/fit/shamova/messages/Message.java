@@ -11,6 +11,21 @@ public abstract class Message implements OutputMessage {
     protected final MessageType type;
     protected final InetAddress receiverAddress;
     protected final int receiverPort;
+    private int countOfTry;
+    protected final long firstSendTime;
+
+
+    public int getCountOfTry() {
+        return countOfTry;
+    }
+
+    public long getFirstSendTime() {
+        return firstSendTime;
+    }
+
+    public void incrementCountOfTry() {
+        countOfTry++;
+    }
 
     public InetAddress getReceiverAddress() {
         return receiverAddress;
@@ -22,7 +37,8 @@ public abstract class Message implements OutputMessage {
         this.id = id;
         this.receiverAddress = receiverAddress;
         this.receiverPort = receiverPort;
-
+        this.countOfTry = 0;
+        this.firstSendTime = System.currentTimeMillis();
     }
 
     @Override

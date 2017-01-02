@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nsu.fit.shamova;
+package nsu.fit.shamova.collection;
 
 import java.util.Collection;
 
